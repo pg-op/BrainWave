@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 const API_KEY = "AIzaSyBLM1JP4E9dN9yKY9sxZg-UASnFXLgZ-EM";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
+let aiMessageCounter = 0; // Counter for AI messages
+
 document.getElementById("sendMessage").addEventListener("click", function (event) {
   event.preventDefault();
 
@@ -17,7 +19,12 @@ document.getElementById("sendMessage").addEventListener("click", function (event
 
     model.generateContent(userInput).then(result => {
       const responseText = result.response && result.response.text ? result.response.text : "";
-      appendMessage("HyperMind AI", responseText, true);
+      aiMessageCounter++;
+
+      // Display every second message given by the AI
+      if (aiMessageCounter % 2 === 0) {
+        appendMessage("HyperMind AI", responseText, true);
+      }
 
       // Additional logic for processing the response
       processResponse(result.response);
@@ -36,7 +43,7 @@ function appendMessage(sender, message, isAI = false) {
 
   if (isAI) {
     const boldRegex = /\*\*(.*?)\*\*/g;
-    const formattedMessage = message;
+    const formattedMessage = message.replace(boldRegex, "<br><span class='bold-text'>$1</span><br>");
 
     messageDiv.innerHTML = `<strong class="ai-message">${sender}: </strong>${formattedMessage}`;
     
