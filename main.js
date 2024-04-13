@@ -1,55 +1,92 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-// Replace with your actual API key
 const API_KEY = "AIzaSyBLM1JP4E9dN9yKY9sxZg-UASnFXLgZ-EM";
-
 const genAI = new GoogleGenerativeAI(API_KEY);
-let chatHistory = []; // Array to store chat messages
+
+let aiMessageCounter = 1;
 
 document.getElementById("sendMessage").addEventListener("click", sendMessage);
 
-document.getElementById("userInput").addEventListener("keydown", function (event) {
+document.getElementById("userInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     sendMessage();
   }
 });
 
 function sendMessage() {
-  const userInput = document.getElementById("userInput").value.trim();
+  const userInput = document.getElementById("userInput").value;
 
-  if (userInput !== "") {
-    appendMessage("user", userInput);
-    chatHistory.push({ sender: "user", message: userInput }); // Log message
+  if (userInput.trim() !== "") {
+    appendMessage("User", userInput);
 
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     model.generateContent(userInput).then(result => {
       const responseText = result.response && result.response.text ? decodeURIComponent(result.response.text) : "";
-      appendMessage("ai", responseText);
-      chatHistory.push({ sender: "ai", message: responseText }); // Log message
+
+      try {
+        processResponse(responseText);
+
+        aiMessageCounter++;
+        if (aiMessageCounter % 2 === 0) {
+          appendMessage("HyperMind AI", responseText, true);
+        }
+      } catch (error) {
+        console.error("Error processing response:", error);
+      }
     }).catch(error => {
       console.error("Error generating content:", error);
-      appendMessage("error", "Error: Could not communicate with AI");
     });
 
     document.getElementById("userInput").value = "";
   }
 }
 
-function appendMessage(sender, message) {
-  const chatHistoryDiv = document.getElementById("chat-history");
+function appendMessage(sender, message, isAI = false) {
+  const chatMessages = document.getElementById("chat-messages");
   const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message", sender);
+  messageDiv.classList.add("mb-2");
 
-  messageDiv.innerHTML = message;
-  chatHistoryDiv.appendChild(messageDiv);
+  if (isAI) {
+    messageDiv.innerHTML = `<strong class="ai-message">${sender}: </strong>${message}`;
+  } else {
+    messageDiv.innerHTML = `<strong class="user-message">${sender}: </strong>${message}`;
+  }
+
+  chatMessages.appendChild(messageDiv);
 
   // Scroll to the bottom of the chat container
-  chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Handle potential future logging functionality (not implemented yet)
-function logChatHistory() {
-  // Implement your logic here to store the chat history (e.g., localStorage, database)
-  console.log("Chat history:", chatHistory);
-}
+const processResponse = (response) => {
+  try {
+    if (response && response.candidates && response.candidates.length > 0) {
+      const text = response.candidates[0].content.parts[0].text;
+      const decodedText = decodeURIComponent(text);
+      appendMessage("HyperMind AI", decodedText, true);
+    }
+
+    if (response.promptFeedback) {
+      throw new CustomError(`Text not available. ${p(response)}`, response);
+    }
+  } catch (error) {
+    // Do not throw the error, just log it
+  }
+};
+
+const extractTextFromCandidate = (candidate) => {
+  const parts = candidate.content?.parts;
+  if (parts && parts.length > 0 && parts[0].text) {
+    return parts[0].text;
+  }
+  return "";
+};
+
+class CustomError extends Error {
+  constructor(message, response) {
+    super(message);
+    this.name = "CustomError";
+    this.response = response;
+  }
+};
