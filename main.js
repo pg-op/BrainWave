@@ -71,9 +71,12 @@ const processResponse = (response) => {
       throw new CustomError(`Text not available. ${p(response)}`, response);
     }
   } catch (error) {
-    // Do not throw the error, just log it
+    // Display error message in the chat interface
+    appendMessage("System", `Error processing response: ${error.message}`, true);
+    console.error("Error processing response:", error);
   }
 };
+
 
 const extractTextFromCandidate = (candidate) => {
   const parts = candidate.content?.parts;
