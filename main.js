@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
 // Replace with your actual API key
-const API_KEY = "YOUR_API_KEY";
+const API_KEY = "AIzaSyBLM1JP4E9dN9yKY9sxZg-UASnFXLgZ-EM";
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 let chatHistory = []; // Array to store chat messages
