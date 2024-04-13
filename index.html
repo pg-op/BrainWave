@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HyperMind AI Chatbox</title>
-  <!-- Bootstrap 5 CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HyperMind AI Chat</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Custom styles for the chatbox */
-    #chat-container {
-      max-width: 400px;
-      margin: auto;
-      margin-top: 50px;
-      border: 1px solid #ccc;
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .chat-container {
+      max-width: 800px;
+      margin: 0 auto;
       padding: 15px;
       border-radius: 10px;
-      background-color: #f5f5f5;
+      height: 500px;
+      overflow-y: scroll; /* Enable scrolling for chat history */
     }
 
     .user-message {
       color: #3498db;
+      font-weight: bold;
+      margin-bottom: 5px;
     }
 
     .ai-message {
       color: #e74c3c;
+      font-weight: bold;
+      margin-bottom: 5px;
     }
 
-    .bold-text {
-      font-weight: bold;
+    .message {
+      padding: 10px;
+      border-radius: 5px;
     }
-    #transparent{
-      color: transparent;
-      font-size: 0;
+
+    .message.user {
+      background-color: #e6f7ff;
+    }
+
+    .message.ai {
+      background-color: #f7e6eb;
     }
   </style>
 </head>
-
 <body>
-
-  <div class="container" id="chat-container">
-    <h2 class="text-center">HyperMind AI Chatbox</h2>
-    <div id="chat-messages"></div>
+  <div class="container">
+    <div class="chat-container" id="chat-history"></div>
     <div class="mb-3">
       <textarea class="form-control" id="userInput" placeholder="Type your message..." rows="3"></textarea>
     </div>
     <button class="btn btn-primary" id="sendMessage">Send</button>
-  </div><p id="transparent"></p>
+  </div>
 
-  <!-- Bootstrap 5 JS and Popper.js -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- HyperMind AI Code -->
-  <script type="module" src="main.js">
-   
-  </script>
+  <script src="script.js"></script>
 </body>
-
 </html>
